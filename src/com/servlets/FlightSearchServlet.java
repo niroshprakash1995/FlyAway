@@ -28,15 +28,17 @@ public class FlightSearchServlet extends HttpServlet {
 		String sourceInput = request.getParameter("source");
 		String destinationInput = request.getParameter("destination");
 		String dateInput = request.getParameter("date");
-		// String noOfPersonsInput = request.getParameter("noofpersons");
+		String noOfPersonsInput = request.getParameter("noofpersons");
 
 		try {
 			org.hibernate.SessionFactory sf = HibernateUtil.buildSessionFactory();
 			Session session = sf.openSession();
 
 			String selectQuery = "SELECT fl.flightid, fl.price, fl.departure, fl.arrival FROM Flights fl, SourceDestination sd"
-					+ " WHERE fl.sdid = sd.sdid and fl.ticketsavailable > 1 and sd.source = :sourceInput and sd.destination = :destinationInput and fl.flightdate = :flightDateInput";
+					+ " WHERE fl.sdid = sd.sdid and fl.ticketsavailable > :personsInput and sd.source = :sourceInput and sd.destination = :destinationInput and fl.flightdate = :flightDateInput";
 			Query query = session.createQuery(selectQuery);
+			int personsInputInteger = Integer.parseInt(noOfPersonsInput);
+			query.setParameter("personsInput", personsInputInteger);
 			query.setParameter("sourceInput", sourceInput);
 			query.setParameter("destinationInput", destinationInput);
 			query.setParameter("flightDateInput", dateInput);
